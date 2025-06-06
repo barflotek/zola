@@ -1,4 +1,116 @@
-# Zola
+# Zola Chat - Windsurf Integration
+
+## Project Overview
+Zola is a modern chat interface that integrates with the Windsurf backend API while maintaining Supabase for user management and data persistence.
+
+## Tech Stack
+- Frontend: Next.js with TypeScript
+- Backend: Windsurf API
+- Database: Supabase
+- State Management: React Context
+
+## Prerequisites
+- Node.js 18+ installed
+- Access to Windsurf API
+- Access to Supabase project
+
+## Environment Setup
+1. Create a `.env.local` file in the project root with:
+```env
+# Windsurf API Configuration
+WINDSURF_API_URL=http://localhost:8000
+WINDSURF_API_KEY=your_windsurf_api_key
+
+# Supabase Configuration
+NEXT_PUBLIC_SUPABASE_URL=https://gdgivpczfnzcfviyxxni.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+SUPABASE_SERVICE_ROLE=your_supabase_service_role_key
+
+# CSRF Protection
+CSRF_SECRET=your_32_character_random_string
+```
+
+2. Generate a CSRF secret:
+```bash
+openssl rand -hex 16
+```
+
+## Getting Started
+1. Install dependencies:
+```bash
+npm install
+```
+
+2. Start the development server:
+```bash
+npm run dev
+```
+
+3. Access the application at http://localhost:3000
+
+## Project Structure
+- `/app` - Next.js app router pages and layouts
+- `/components` - React components
+- `/lib` - Utility functions and store providers
+  - `/agent-store` - Agent management
+  - `/chat-store` - Chat state management
+  - `/user-store` - User management with Supabase
+  - `/user-preference-store` - User preferences
+
+## Key Components
+1. **Providers** (in order of nesting):
+   - ThemeProvider
+   - UserProvider (Supabase auth)
+   - UserPreferencesProvider
+   - ChatsProvider
+   - ChatSessionProvider
+   - AgentProvider
+   - SidebarProvider
+
+2. **API Integration**:
+   - Chat messages use WindsurfClient
+   - User management uses Supabase
+   - Agent management uses both Windsurf and Supabase
+
+## Development Notes
+1. Always ensure both services are running:
+   - Windsurf backend (port 8000)
+   - Next.js frontend (port 3000)
+
+2. Key files to check if issues arise:
+   - `.env.local` - Environment configuration
+   - `app/layout.tsx` - Provider setup
+   - `app/api/chat/route.ts` - Chat API endpoint
+
+## Troubleshooting
+1. If you see Supabase connection errors:
+   - Verify Supabase credentials in `.env.local`
+   - Check if Supabase project is accessible
+
+2. If chat doesn't work:
+   - Ensure Windsurf API is running
+   - Check WindsurfClient configuration
+   - Verify user authentication state
+
+3. Common fixes:
+   - Clear browser cache and local storage
+   - Restart Next.js development server
+   - Check browser console for specific errors
+
+## Current Status
+- [x] Basic Windsurf integration
+- [x] Supabase configuration
+- [x] Provider hierarchy setup
+- [ ] Complete user authentication flow
+- [ ] Agent management integration
+- [ ] Chat history persistence
+
+## Next Steps
+1. Complete the chat functionality testing
+2. Implement proper error handling
+3. Add user authentication flow
+4. Set up agent management
+5. Add chat history persistence
 
 [zola.chat](https://zola.chat)
 

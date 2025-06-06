@@ -10,10 +10,7 @@ import { ChatSessionProvider } from "@/lib/chat-store/session/provider"
 import { APP_DESCRIPTION, APP_NAME } from "@/lib/config"
 import { UserPreferencesProvider } from "@/lib/user-preference-store/provider"
 import { UserProvider } from "@/lib/user-store/provider"
-import { getUserProfile } from "@/lib/user/api"
 import { ThemeProvider } from "next-themes"
-import Script from "next/script"
-import { LayoutClient } from "./layout-client"
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -35,45 +32,58 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
-  const isDev = process.env.NODE_ENV === "development"
-  const userProfile = await getUserProfile()
+  // Create a default user profile for development
+  const defaultUser = {
+    id: 'default-user',
+    email: 'user@example.com',
+    display_name: 'Default User',
+    profile_image: '',
+    role: 'user',
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    anonymous: false,
+    daily_message_count: 0,
+    daily_reset: new Date().toISOString(),
+    message_count: 0,
+    onboarding_completed: true,
+    system_prompt: null,
+    tools_enabled: true,
+    updated_by: 'default-user',
+    preferred_model: null,
+    premium: false,
+    last_active_at: new Date().toISOString(),
+    daily_pro_message_count: 0,
+    daily_pro_reset: new Date().toISOString()
+  }
 
   return (
     <html lang="en" suppressHydrationWarning>
-      {!isDev ? (
-        <Script
-          async
-          src="https://analytics.umami.is/script.js"
-          data-website-id="42e5b68c-5478-41a6-bc68-088d029cee52"
-        />
-      ) : null}
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <LayoutClient />
-        <UserProvider initialUser={userProfile}>
-          <ChatsProvider userId={userProfile?.id}>
-            <ChatSessionProvider>
-              <AgentProvider userId={userProfile?.id}>
-                <UserPreferencesProvider userId={userProfile?.id}>
-                  <TooltipProvider delayDuration={200} skipDelayDuration={500}>
-                    <ThemeProvider
-                      attribute="class"
-                      defaultTheme="light"
-                      enableSystem
-                      disableTransitionOnChange
-                    >
-                      <SidebarProvider defaultOpen>
-                        <Toaster position="top-center" />
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <UserProvider initialUser={defaultUser}>
+            <UserPreferencesProvider>
+              <ChatsProvider>
+                <ChatSessionProvider>
+                  <AgentProvider userId={defaultUser.id}>
+                    <SidebarProvider>
+                      <TooltipProvider>
                         {children}
-                      </SidebarProvider>
-                    </ThemeProvider>
-                  </TooltipProvider>
-                </UserPreferencesProvider>
-              </AgentProvider>
-            </ChatSessionProvider>
-          </ChatsProvider>
-        </UserProvider>
+                        <Toaster position="bottom-right" />
+                      </TooltipProvider>
+                    </SidebarProvider>
+                  </AgentProvider>
+                </ChatSessionProvider>
+              </ChatsProvider>
+            </UserPreferencesProvider>
+          </UserProvider>
+        </ThemeProvider>
       </body>
     </html>
   )
